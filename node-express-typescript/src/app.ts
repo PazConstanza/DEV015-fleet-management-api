@@ -9,27 +9,35 @@ app.use(express.json());
 
 // Endpoint para obtener todos los taxis
 app.get('/taxis', async (req: Request, res: Response) => {
-    const { plate, page = 1, limit = 10 } = req.query;
+  let { plate, page = '1', limit = '10' } = req.query;
+
+  const pageNumber = parseInt(page as string, 10);
+  const limitNumber = parseInt(limit as string, 10);
   
-    try {
-      const where: any = {};
-  
-      if (plate) {
-        where.plate = String(plate);
-      }
-  
-      const taxis = await prisma.taxis.findMany({
-        where,
-        skip: (Number(page) - 1) * Number(limit),
-        take: Number(limit),
-      });
-  
-      res.json(taxis);
-    } catch (error) {
-      res.status(500).json({ error: 'Error fetching taxis' });
+  if (isNaN(pageNumber) || isNaN(limitNumber)) {
+    return res.status(400).json({ error: 'Page and limit must be valid numbers' });
+  }
+
+  try {
+    const where: any = {};
+
+    if (plate) {
+      where.plate = String(plate);
     }
-  });
-  
+
+    const taxis = await prisma.taxis.findMany({
+      where,
+      skip: (Number(pageNumber) - 1) * Number(limitNumber),
+      take: Number(limitNumber),
+    });
+
+    res.json(taxis);
+  } catch (error: any) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Error fetching taxis' });
+  }
+});
+
 
 // Inicia el servidor
 const PORT = process.env.PORT || 3000;
