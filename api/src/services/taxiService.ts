@@ -34,3 +34,21 @@ export const getTaxiTrajectories = async (taxiId: number, date: string) => {
     },
   });
 };
+
+
+export const getLatestTrajectories = async () => {
+ 
+  
+    return await prisma.taxis.findMany({
+      
+      include: {
+        trajectories: {
+            orderBy: {
+                date: 'desc'
+            },
+            take: 1,
+          
+        },
+      },
+    });
+  };

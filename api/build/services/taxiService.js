@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTaxiTrajectories = exports.getAllTaxis = void 0;
+exports.getLatestTrajectories = exports.getTaxiTrajectories = exports.getAllTaxis = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getAllTaxis = (plate_1, ...args_1) => __awaiter(void 0, [plate_1, ...args_1], void 0, function* (plate, page = '1', limit = '10') {
@@ -44,3 +44,16 @@ const getTaxiTrajectories = (taxiId, date) => __awaiter(void 0, void 0, void 0, 
     });
 });
 exports.getTaxiTrajectories = getTaxiTrajectories;
+const getLatestTrajectories = () => __awaiter(void 0, void 0, void 0, function* () {
+    return yield prisma.taxis.findMany({
+        include: {
+            trajectories: {
+                orderBy: {
+                    date: 'desc'
+                },
+                take: 1,
+            },
+        },
+    });
+});
+exports.getLatestTrajectories = getLatestTrajectories;
