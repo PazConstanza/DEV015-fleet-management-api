@@ -5,4 +5,5 @@ const taxiController_1 = require("../controllers/taxiController");
 const router = (0, express_1.Router)();
 router.get('/taxis', taxiController_1.getTaxis);
 router.get('/trajectories', taxiController_1.getTrajectories);
+router.get('/trajectories/latest', taxiController_1.getLastTrajectory);
 exports.default = router;

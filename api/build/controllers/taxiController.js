@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTrajectories = exports.getTaxis = void 0;
+exports.getLastTrajectory = exports.getTrajectories = exports.getTaxis = void 0;
 const taxiService_1 = require("../services/taxiService");
 const getTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -39,3 +39,16 @@ const getTrajectories = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.getTrajectories = getTrajectories;
+const getLastTrajectory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const trajectories = yield (0, taxiService_1.getLatestTrajectories)();
+        if (!trajectories) {
+            return res.status(404).json({ error: 'No trajectories found' });
+        }
+        res.json(trajectories);
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Error fetching taxi trajectories' });
+    }
+});
+exports.getLastTrajectory = getLastTrajectory;
