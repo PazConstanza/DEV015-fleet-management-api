@@ -40,15 +40,31 @@ const getTrajectories = (req, res) => __awaiter(void 0, void 0, void 0, function
 });
 exports.getTrajectories = getTrajectories;
 const getLastTrajectory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const trajectories = yield (0, taxiService_1.getLatestTrajectories)();
-        if (!trajectories) {
-            return res.status(404).json({ error: 'No trajectories found' });
+    const trajectories = yield (0, taxiService_1.getLatestTrajectories)();
+    if (!trajectories || trajectories.length === 0) {
+        return res.status(404).json({ error: 'No trajectories found' });
+    }
+    // Tomar el primer objeto de la lista de "trajectories"
+    const formattedTrajectories = trajectories.map(taxi => {
+        const latestTrajectory = taxi.trajectories[0]; // Obtener la última trayectoria
+        let response = {};
+        if (latestTrajectory != undefined) {
+            response = {
+                taxiId: taxi.id,
+                plate: taxi.plate,
+                date: latestTrajectory.date.toISOString().replace('T', ' ').replace('.000Z', '') || '',
+                latitude: latestTrajectory.latitude || '',
+                longitude: latestTrajectory.longitude || ''
+            };
         }
-        res.json(trajectories);
-    }
-    catch (error) {
-        res.status(500).json({ error: 'Error fetching taxi trajectories' });
-    }
+        else {
+            response = {
+                taxiId: taxi.id,
+                plate: taxi.plate
+            };
+        }
+        return response;
+    });
+    res.json(formattedTrajectories);
 });
 exports.getLastTrajectory = getLastTrajectory;
