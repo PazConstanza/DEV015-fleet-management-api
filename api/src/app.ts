@@ -1,14 +1,17 @@
 import express from 'express';
 import taxiRoutes from './routes/taxiRoutes';
+import userRoutes from './routes/userRoutes'; 
 
 const app = express();
 app.use(express.json());
 
 app.use('/api', taxiRoutes);
+app.use('/api', userRoutes); 
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
 export default app;
+
